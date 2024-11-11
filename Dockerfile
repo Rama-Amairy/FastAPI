@@ -1,29 +1,16 @@
-# Start from a basic Linux image (Debian/Alpine)
-#FROM debian:bullseye-slim
-# Use Arch Linux as the base image
-FROM archlinux:latest
+# Use the official Python image with the desired version (e.g., 3.9)
+FROM python:3.9-slim
 
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Install reflector separately for better control over mirror selection
-RUN pacman -Syu --noconfirm && \
-    pacman -S --noconfirm reflector
+# Copy the requirements file to the container
+COPY requirements.txt .
 
-# Update mirror list with the top 10 most recently synchronized mirrors
-RUN reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install scikit-learn
 
-# Refresh package database with updated mirrors and install necessary packages
-RUN pacman -Syu --noconfirm --disable-download-timeout --overwrite '*' && \
-    pacman -S --noconfirm python python-pip python-virtualenv gcc bash
-
-# Copy requirements file
-COPY requirements.txt /app/
-
-# Create and activate the virtual environment, then install dependencies
-RUN python -m venv env_ && \
-    /bin/bash -c "source env_/bin/activate && pip install --no-cache-dir -r requirements.txt"
-    
 # Copy the app source code and other files to the container
 COPY . /app/
 

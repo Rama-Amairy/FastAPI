@@ -1,7 +1,7 @@
 import joblib
 import numpy as np
 import os
-import pickle
+
 
 # Load your trained model (update the path as necessary)
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "house_prediction_model2.pkl")
